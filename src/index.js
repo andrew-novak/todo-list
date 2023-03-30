@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView, Text, View, ScrollView, Image } from "react-native";
 import CheckBox from "expo-checkbox";
 
+import storage from "./storage";
 import TaskDialog from "./TaskDialog";
 import TaskList from "./TaskList";
 import FabButton from "./FabButton";
@@ -21,8 +22,16 @@ const App = () => {
     const newTasks = { ...tasks };
     newTasks[date] = [...(newTasks[date] ? newTasks[date] : []), newTask];
     setTasks(newTasks);
+    storage.storeTasks(newTasks);
     closeTaskDialog();
   };
+
+  useEffect(() => {
+    (async () => {
+      const storedTasks = await storage.getTasks();
+      storedTasks && setTasks(storedTasks);
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={{ height: "100%", width: "100%" }}>
