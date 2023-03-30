@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const getTasks = async () => {
   try {
     const tasks = JSON.parse(await AsyncStorage.getItem("tasks"));
+    //await AsyncStorage.clear();
     return tasks;
   } catch (error) {
     throw new Error(error);

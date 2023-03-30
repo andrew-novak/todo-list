@@ -4,7 +4,7 @@ import CheckBox from "expo-checkbox";
 
 import { getDisplayDate } from "./helpers";
 
-const TaskList = ({ tasks }) => {
+const TaskList = ({ tasks, onCheckboxClick }) => {
   const [dateOffset, setDateOffset] = useState(0);
   const onLayout = (event) => {
     var { x, y, width, height } = event.nativeEvent.layout;
@@ -21,9 +21,10 @@ const TaskList = ({ tasks }) => {
         paddingRight: 24,
       }}
     >
-      {taskEntries.map(
-        ([date, oneDayTasks], index) => (
-          /* Box Start */
+      {taskEntries.map(([date, oneDayTasks], index) => {
+        const oneDayTasksEntries = Object.entries(oneDayTasks);
+        /* Box Start */
+        return (
           <View
             key={index}
             style={{
@@ -59,32 +60,44 @@ const TaskList = ({ tasks }) => {
             </View>
             {/* Date End */}
             {/* Tasks Start*/}
-            {oneDayTasks.map((task, index) => (
+            {oneDayTasksEntries.map(([id, task], index) => (
               <View
                 key={index}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
                   paddingTop: index === 0 ? 36 : 12,
-                  paddingBottom: index === oneDayTasks.length - 1 ? 36 : 12,
+                  paddingBottom:
+                    index === oneDayTasksEntries.length - 1 ? 36 : 12,
                   paddingLeft: 24,
                 }}
               >
                 <CheckBox
+                  value={task.isChecked}
                   style={{
                     marginRight: 12,
                     height: 30,
                     width: 30,
                   }}
+                  onValueChange={() => onCheckboxClick(date, id)}
                 />
-                <Text style={{ fontSize: 20 }}>{task.name}</Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    textDecorationLine: task.isChecked
+                      ? "line-through"
+                      : "none",
+                  }}
+                >
+                  {task.name}
+                </Text>
               </View>
             ))}
             {/* Tasks End */}
           </View>
-        )
+        );
         /* Box End */
-      )}
+      })}
     </View>
   );
 };

@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaView, Text, View, ScrollView, Image } from "react-native";
 import CheckBox from "expo-checkbox";
 
+import { getNextObjectKey } from "./helpers";
 import storage from "./storage";
 import TaskDialog from "./TaskDialog";
 import TaskList from "./TaskList";
@@ -17,21 +18,31 @@ const App = () => {
   // tasks
   const [tasks, setTasks] = useState({});
 
-  const addTask = (name, date) => {
-    const newTask = { name, isChecked: false };
-    const newTasks = { ...tasks };
-    newTasks[date] = [...(newTasks[date] ? newTasks[date] : []), newTask];
-    setTasks(newTasks);
-    storage.storeTasks(newTasks);
-    closeTaskDialog();
-  };
-
   useEffect(() => {
     (async () => {
       const storedTasks = await storage.getTasks();
       storedTasks && setTasks(storedTasks);
     })();
   }, []);
+
+  const addTask = (name, date) => {
+    const newTasks = { ...tasks };
+    if (!newTasks[date]) {
+      newTasks[date] = {};
+    }
+    const nextKey = getNextObjectKey(newTasks[date]);
+    newTasks[date][nextKey] = { name, isChecked: false };
+    setTasks(newTasks);
+    storage.storeTasks(newTasks);
+    closeTaskDialog();
+  };
+
+  const onCheckboxClick = (date, id) => {
+    const newTasks = { ...tasks };
+    newTasks[date][id].isChecked = !newTasks[date][id].isChecked;
+    setTasks(newTasks);
+    storage.storeTasks(newTasks);
+  };
 
   return (
     <SafeAreaView style={{ height: "100%", width: "100%" }}>
@@ -63,7 +74,7 @@ const App = () => {
         <Text style={{ fontSize: 36, marginLeft: 24 }}>Todo List</Text>
       </View>
       <ScrollView style={{ height: "100%" }}>
-        <TaskList tasks={tasks} />
+        <TaskList tasks={tasks} onCheckboxClick={onCheckboxClick} />
         <StatusBar style="auto" />
       </ScrollView>
       <FabButton character="+" onPress={openTaskDialog} />
