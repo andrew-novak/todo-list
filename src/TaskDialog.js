@@ -13,6 +13,7 @@ import { getDisplayDate } from "./helpers";
 
 const TaskDialog = ({
   isOpen,
+  buttonColor,
   onCancel: passedOnCancel,
   onConfirm: passedOnConfirm,
 }) => {
@@ -95,6 +96,7 @@ const TaskDialog = ({
           <DateTimePicker
             value={date}
             mode="date"
+            style={{ backgroundColor: "yellow", color: "red" }}
             onChange={handleDateSelect}
           />
         )}
@@ -113,7 +115,7 @@ const TaskDialog = ({
             <Text style={{ fontSize: 24 }}>{getDisplayDate(date)}</Text>
           </View>
         </TouchableOpacity>
-        <Button title="Add" onPress={onConfirm} />
+        <Button title="Add" color={buttonColor} onPress={onConfirm} />
       </View>
     </View>
   );

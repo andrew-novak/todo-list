@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
 import CheckBox from "expo-checkbox";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { getDisplayDate } from "./helpers";
 
-const TaskList = ({ tasks, onCheckboxClick }) => {
+const TaskList = ({ tasks, checkboxColor, onCheckboxToggle, onTaskRemove }) => {
   const [dateOffset, setDateOffset] = useState(0);
   const onLayout = (event) => {
     var { x, y, width, height } = event.nativeEvent.layout;
@@ -70,19 +71,29 @@ const TaskList = ({ tasks, onCheckboxClick }) => {
                   paddingBottom:
                     index === oneDayTasksEntries.length - 1 ? 36 : 12,
                   paddingLeft: 24,
+                  paddingRight: 24,
                 }}
               >
                 <CheckBox
                   value={task.isChecked}
+                  color={checkboxColor || null}
                   style={{
-                    marginRight: 12,
                     height: 30,
                     width: 30,
+                    // shadow
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.5,
+                    shadowRadius: 2,
+                    elevation: 2,
                   }}
-                  onValueChange={() => onCheckboxClick(date, id)}
+                  onValueChange={() => onCheckboxToggle(date, id)}
                 />
                 <Text
                   style={{
+                    flexGrow: 1,
+                    paddingLeft: 12,
+                    paddingRight: 12,
                     fontSize: 20,
                     textDecorationLine: task.isChecked
                       ? "line-through"
@@ -91,6 +102,14 @@ const TaskList = ({ tasks, onCheckboxClick }) => {
                 >
                   {task.name}
                 </Text>
+                {tasks[date][id].isChecked && (
+                  <Ionicons
+                    name="trash-outline"
+                    size={28}
+                    color="red"
+                    onPress={() => onTaskRemove(date, id)}
+                  />
+                )}
               </View>
             ))}
             {/* Tasks End */}

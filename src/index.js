@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaView, Text, View, ScrollView, Image } from "react-native";
 import CheckBox from "expo-checkbox";
+import { registerRootComponent } from "expo";
 
 import { getNextObjectKey } from "./helpers";
 import storage from "./storage";
@@ -26,6 +27,9 @@ const App = () => {
   }, []);
 
   const addTask = (name, date) => {
+    if (name.length < 1) {
+      return;
+    }
     const newTasks = { ...tasks };
     if (!newTasks[date]) {
       newTasks[date] = {};
@@ -37,9 +41,19 @@ const App = () => {
     closeTaskDialog();
   };
 
-  const onCheckboxClick = (date, id) => {
+  const onCheckboxToggle = (date, id) => {
     const newTasks = { ...tasks };
     newTasks[date][id].isChecked = !newTasks[date][id].isChecked;
+    setTasks(newTasks);
+    storage.storeTasks(newTasks);
+  };
+
+  const onTaskRemove = (date, id) => {
+    const newTasks = { ...tasks };
+    delete newTasks[date][id];
+    if (Object.keys(newTasks[date]).length < 1) {
+      delete newTasks[date];
+    }
     setTasks(newTasks);
     storage.storeTasks(newTasks);
   };
@@ -48,6 +62,7 @@ const App = () => {
     <SafeAreaView style={{ height: "100%", width: "100%" }}>
       <TaskDialog
         isOpen={taskDialog !== null}
+        buttonColor="#55a465"
         onCancel={closeTaskDialog}
         onConfirm={addTask}
       />
@@ -55,7 +70,7 @@ const App = () => {
         style={{
           height: 24,
           width: "100%",
-          backgroundColor: "#0067ba",
+          backgroundColor: "#488854",
         }}
       />
       <View
@@ -64,22 +79,49 @@ const App = () => {
           width: "100%",
           flexDirection: "row",
           alignItems: "center",
-          backgroundColor: "#038eff",
+          backgroundColor: "#55a465",
         }}
       >
-        {/*<Image
-          source={require("./todo-icon.png")}
-          style={{ height: 58, width: 58, margin: 12 }}
-        />*/}
-        <Text style={{ fontSize: 36, marginLeft: 24 }}>Todo List</Text>
+        <Image
+          source={require("./todoIcon.png")}
+          style={{
+            height: 58,
+            width: 58,
+            margin: 12,
+            borderRadius: 9999,
+            borderWidth: 2,
+            borderColor: "white",
+          }}
+        />
+        <Text
+          style={{
+            fontSize: 36,
+            marginLeft: 0,
+            color: "#e9eee7",
+            fontStyle: "italic",
+            fontWeight: 600,
+          }}
+        >
+          Todo List
+        </Text>
       </View>
       <ScrollView style={{ height: "100%" }}>
-        <TaskList tasks={tasks} onCheckboxClick={onCheckboxClick} />
+        <TaskList
+          tasks={tasks}
+          checkboxColor="#55a465"
+          onCheckboxToggle={onCheckboxToggle}
+          onTaskRemove={onTaskRemove}
+        />
         <StatusBar style="auto" />
       </ScrollView>
-      <FabButton character="+" onPress={openTaskDialog} />
+      <FabButton
+        character="+"
+        textColor="#e9eee7"
+        backgroundColor="#55a465"
+        onPress={openTaskDialog}
+      />
     </SafeAreaView>
   );
 };
 
-export default App;
+export default registerRootComponent(App);
