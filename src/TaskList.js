@@ -65,6 +65,7 @@ const TaskList = ({ tasks, checkboxColor, onCheckboxToggle, onTaskRemove }) => {
               <View
                 key={index}
                 style={{
+                  width: "100%",
                   flexDirection: "row",
                   alignItems: "center",
                   paddingTop: index === 0 ? 36 : 12,
@@ -91,6 +92,7 @@ const TaskList = ({ tasks, checkboxColor, onCheckboxToggle, onTaskRemove }) => {
                 />
                 <Text
                   style={{
+                    display: "flex",
                     flexGrow: 1,
                     paddingLeft: 12,
                     paddingRight: 12,
