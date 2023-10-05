@@ -5,3 +5,12 @@
 A mobile app developed using Expo, React Native, and React, with a focus on helping users execute activities in a more structured and efficient manner, and prevent forgetting important commitments.
 
 Utilizes React Native's AsyncStorage for data persistence.
+
+Commands:
+
+```
+npm run start
+npm run android
+npm run ios
+npm run web
+```
